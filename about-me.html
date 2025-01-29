@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Ensures the page is responsive on mobile devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Rules</title>
+  <style>
+    /* Reset and basic styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: sans-serif;
+      color: #333;
+      line-height: 1.5;
+      padding: 1rem;
+    }
+
+    /* Headings */
+    h1, h2 {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Container */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Section spacing */
+    .section {
+      margin-bottom: 1.5rem;
+    }
+    .section p {
+      margin-top: 0.25rem;
+    }
+
+    /* Label List */
+    .label-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      justify-content: center;
+    }
+    .label-item {
+      padding: 0.5rem 1rem;
+      background-color: #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .label-item:hover {
+      background-color: #bbb;
+    }
+    /* Active state for label filter */
+    .label-item.active {
+      background-color: #bbb; /* Highlight selected filters */
+      font-weight: bold;
+    }
+
+    /* Item List */
+    .item {
+      display: flex;        
+      align-items: center;  
+      gap: 1rem;            
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      border-bottom: 1px solid #ccc;
+    }
+    .item-title {
+      font-weight: bold;
+    }
+    .item-priority {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    /* Lightbulb button */
+    .lightbulb-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      cursor: pointer;
+    }
+    /* Default color yellow */
+    .lightbulb-icon {
+      width: 16px;
+      height: 16px;
+      fill: #ffd700; /* Default gold/yellow color */
+      transition: fill 0.2s;
+    }
+    /* Hover color (slightly darker yellow) */
+    .lightbulb-container:hover .lightbulb-icon {
+      fill: #fbbf24;
+    }
+    .lightbulb-count {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    /* Tweet icon link */
+    .tweet-icon-link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      gap: 0.25rem; /* space between icon and count */
+    }
+    .tweet-icon {
+      width: 16px;
+      height: 16px;
+      fill: #1da1f2;
+      transition: fill 0.2s;
+    }
+    .tweet-icon-link:hover .tweet-icon {
+      fill: #148cd2;
+    }
+    .tweet-count {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .container {
+        padding: 0 1rem;
+      }
+      .item {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Page Header -->
+  <h1>Gerald O’Connor</h1>
+
+  <div class="container">
+    <!-- Values -->
+    <div class="section">
+      <h2>Values</h2>
+      <p>Integrity, empathy and grit.</p>
+    </div>
+
+    <!-- Mission -->
+    <div class="section">
+      <h2>Mission</h2>
+      <p>My mission is to create an environment of entrepreneurship, discipline, grit, empathy and achievement in very large financial organisations.</p>
+    </div>
+
+    <!-- My books -->
+    <div class="section">
+      <h2>My books</h2>
+      <ul>
+        <li>
+          <a href="https://www.amazon.co.uk/Empower-Let-Go-Unleashing-leadership/dp/1537102605" target="_blank" rel="noopener noreferrer">
+            Empower and Let Go
+          </a>
+        </li>
+        <li>
+          <a href="https://www.amazon.com/Start-Up-Speed-Enterprise-Achieving/dp/B0DHRCQVMF?dplnkId=7aee636e-3755-4ec5-b40e-60bd2c55cf14&nodl=1" target="_blank" rel="noopener noreferrer">
+            Start Up Speed At Enterprise
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- My Rules -->
+    <div class="section">
+      <h2>My Rules</h2>
+      <!-- Labels -->
+      <div id="labelList" class="label-list"></div>
+      <!-- Items -->
+      <div id="itemList" class="item-list"></div>
+    </div>
+  </div>
+
+  <script>
+    // Simulating the JSON data with localStorage for persistence
+    const defaultItems = [
+      {
+        priority: 1,
+        title: "Wake Up Early",
+        labels: ["health", "morning"],
+        count: 0,
+        tweetCount: 0
+      },
+      {
+        priority: 2,
+        title: "Morning Workout",
+        labels: ["health", "fitness"],
+        count: 0,
+        tweetCount: 0
+      },
+      {
+        priority: 3,
+        title: "Read a Chapter of a Book",
+        labels: ["learning", "relaxation"],
+        count: 0,
+        tweetCount: 0
+      },
+      {
+        priority: 4,
+        title: "Check Emails",
+        labels: ["work"],
+        count: 0,
+        tweetCount: 0
+      },
+      {
+        priority: 5,
+        title: "Team Meeting",
+        labels: ["work", "collaboration"],
+        count: 0,
+        tweetCount: 0
+      },
+      {
+        priority: 6,
+        title: "Grocery Shopping",
+        labels: ["personal", "errands"],
+        count: 0,
+        tweetCount: 0
+      }
+    ];
+
+    function loadItemsFromStorage() {
+      try {
+        const stored = localStorage.getItem("ruleItems");
+        if (stored) {
+          return JSON.parse(stored);
+        } else {
+          return defaultItems;
+        }
+      } catch (err) {
+        console.error("Error reading from localStorage:", err);
+        return defaultItems;
+      }
+    }
+
+    function persistItems(itemsToStore) {
+      try {
+        localStorage.setItem("ruleItems", JSON.stringify(itemsToStore));
+      } catch (err) {
+        console.error("Error writing to localStorage:", err);
+      }
+    }
+
+    // Initialize items
+    let items = loadItemsFromStorage();
+    // Sort by priority
+    items.sort((a, b) => a.priority - b.priority);
+
+    // Collect all unique labels
+    const allLabels = new Set();
+    items.forEach(item => {
+      item.labels.forEach(label => allLabels.add(label));
+    });
+    const uniqueLabels = Array.from(allLabels);
+
+    /* MULTI-LABEL FILTER:
+     * We keep a Set of selectedLabels. Whenever the user clicks a label, 
+     * we toggle it in the set. Then we re-render the filtered items 
+     * that contain at least one of the selected labels (union approach). 
+     * If no labels are selected, we show all items.
+     */
+    let selectedLabels = new Set();
+
+    // Let's define our DOM references
+    const labelListEl = document.getElementById("labelList");
+    const itemListEl = document.getElementById("itemList");
+
+    function handleLightbulbClick(item) {
+      item.count++;
+      persistItems(items);
+      renderItems(getFilteredItems());
+    }
+
+    function handleTweetClick(item) {
+      item.tweetCount++;
+      persistItems(items);
+      renderItems(getFilteredItems());
+    }
+
+    // Returns items that include at least one of the selectedLabels
+    function getFilteredItems() {
+      if (selectedLabels.size === 0) {
+        // No filters selected, show everything
+        return items;
+      }
+      // Otherwise, return items where intersection of item.labels and selectedLabels is non-empty
+      return items.filter(item => 
+        item.labels.some(label => selectedLabels.has(label))
+      );
+    }
+
+    // Render the list of items
+    function renderItems(itemsToRender) {
+      itemListEl.innerHTML = "";
+
+      itemsToRender.forEach(item => {
+        const itemEl = document.createElement("div");
+        itemEl.className = "item";
+
+        const titleEl = document.createElement("div");
+        titleEl.className = "item-title";
+        titleEl.textContent = item.title;
+
+        const priorityEl = document.createElement("div");
+        priorityEl.className = "item-priority";
+        priorityEl.textContent = `Priority: ${item.priority}`;
+
+        // Lightbulb + count
+        const lightbulbContainer = document.createElement("div");
+        lightbulbContainer.className = "lightbulb-container";
+        lightbulbContainer.title = "Click to increase insight count";
+        lightbulbContainer.addEventListener("click", () => handleLightbulbClick(item));
+
+        // Lightbulb icon
+        const lightbulbIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        lightbulbIcon.setAttribute("viewBox", "0 0 24 24");
+        lightbulbIcon.classList.add("lightbulb-icon");
+
+        const lightbulbPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        lightbulbPath.setAttribute(
+          "d",
+          "M9 21h6c0-1.654 1.347-3 3-3v-1.621a7.953 7.953 0 0 0 2-5.379c0-4.411-3.589-8-8-8s-8 3.589-8 8c0 2.053.815 3.922 2.148 5.332l.852.934v1.734c1.654 0 3 1.346 3 3zm3-18c3.309 0 6 2.691 6 6a5.95 5.95 0 0 1-1.531 3.951l-.004.005c-.806.94-1.465 1.706-1.465 2.546v.498c0 .351-.223.656-.562.656-.552 0-1 .448-1 1v1h-2v-1c0-.552-.45-1-1-1-.338 0-.562-.305-.562-.656v-.498c0-.84-.66-1.607-1.465-2.547l-.004-.005A5.95 5.95 0 0 1 6 9c0-3.309 2.691-6 6-6z"
+        );
+        lightbulbIcon.appendChild(lightbulbPath);
+
+        // Count next to the bulb
+        const lightbulbCount = document.createElement("span");
+        lightbulbCount.className = "lightbulb-count";
+        lightbulbCount.textContent = item.count.toString();
+
+        // Put bulb icon + count in container
+        lightbulbContainer.appendChild(lightbulbIcon);
+        lightbulbContainer.appendChild(lightbulbCount);
+
+        // Twitter share link + tweet count
+        const tweetLink = document.createElement("a");
+        tweetLink.className = "tweet-icon-link";
+        tweetLink.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+          `My rule No. ${item.priority}: "${item.title}" For more: https://www.geroconnor.com`
+        )}`;
+        tweetLink.target = "_blank";
+        tweetLink.addEventListener("click", () => handleTweetClick(item));
+
+        // Twitter icon
+        const twitterIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        twitterIcon.setAttribute("viewBox", "0 0 24 24");
+        twitterIcon.classList.add("tweet-icon");
+
+        const tweetPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        tweetPath.setAttribute(
+          "d",
+          "M23.954 4.569c-.885.39-1.83.654-2.825.775 1.014-.611 1.793-1.574 2.163-2.723-.951.564-2.005.974-3.127 1.195-.897-.953-2.178-1.548-3.594-1.548-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124-4.09-.205-7.72-2.164-10.148-5.144-.424.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.062c0 2.385 1.693 4.374 3.946 4.827-.413.11-.85.17-1.296.17-.317 0-.626-.031-.928-.088.627 1.956 2.445 3.379 4.604 3.417-1.68 1.319-3.809 2.105-6.115 2.105-.398 0-.79-.023-1.175-.069 2.179 1.397 4.768 2.21 7.548 2.21 9.057 0 14.01-7.507 14.01-14.009 0-.21 0-.42-.016-.63.962-.695 1.796-1.562 2.457-2.549z"
+        );
+        twitterIcon.appendChild(tweetPath);
+
+        // Tweet count
+        const tweetCountSpan = document.createElement("span");
+        tweetCountSpan.className = "tweet-count";
+        tweetCountSpan.textContent = item.tweetCount.toString();
+
+        // Assembling the tweet link
+        tweetLink.appendChild(twitterIcon);
+        tweetLink.appendChild(tweetCountSpan);
+
+        // Put it all together
+        itemEl.appendChild(titleEl);
+        itemEl.appendChild(priorityEl);
+        itemEl.appendChild(lightbulbContainer);
+        itemEl.appendChild(tweetLink);
+
+        itemListEl.appendChild(itemEl);
+      });
+    }
+
+    // Render label buttons
+    function renderLabels(labels) {
+      labelListEl.innerHTML = "";
+
+      // "Show All" button to reset
+      const showAllLabel = document.createElement("div");
+      showAllLabel.className = "label-item";
+      showAllLabel.textContent = "Show All";
+      showAllLabel.addEventListener("click", () => {
+        selectedLabels.clear();
+        // Clear active states
+        Array.from(labelListEl.getElementsByClassName("label-item"))
+          .forEach(labelEl => labelEl.classList.remove("active"));
+        renderItems(items);
+      });
+      labelListEl.appendChild(showAllLabel);
+
+      // Create a button for each unique label
+      labels.forEach(label => {
+        const labelEl = document.createElement("div");
+        labelEl.className = "label-item";
+        labelEl.textContent = label;
+        labelEl.addEventListener("click", () => {
+          // Toggle selection
+          if (selectedLabels.has(label)) {
+            selectedLabels.delete(label);
+            labelEl.classList.remove("active");
+          } else {
+            selectedLabels.add(label);
+            labelEl.classList.add("active");
+          }
+          // Re-render items
+          renderItems(getFilteredItems());
+        });
+        labelListEl.appendChild(labelEl);
+      });
+    }
+
+    // Initial render
+    renderLabels(uniqueLabels);
+    renderItems(items);
+  </script>
+</body>
+</html>
