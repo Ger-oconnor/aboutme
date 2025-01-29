@@ -66,18 +66,21 @@
     /* Item List */
     .item {
       display: flex;
+      flex-wrap: wrap; /* Allow wrapping if screen is small */
       align-items: center;
       gap: 1rem;
       margin-bottom: 0.5rem;
       padding: 0.5rem;
       border-bottom: 1px solid #ccc;
     }
-    .item-title {
-      font-weight: bold;
-    }
     .item-priority {
       color: #666;
       font-size: 0.9rem;
+      font-weight: bold;
+    }
+    .item-title {
+      font-weight: normal;
+      flex: 1; /* expand to fill space if available */
     }
 
     /* Lightbulb button */
@@ -127,10 +130,6 @@
     @media (max-width: 600px) {
       .container {
         padding: 0 1rem;
-      }
-      .item {
-        flex-wrap: wrap;
-        gap: 0.5rem;
       }
     }
   </style>
@@ -189,1133 +188,845 @@
 
   <script>
     /*
-      We store all 158 rules in defaultItems, 
-      each with priority, title, labels, count, tweetCount.
-      The user wants to ignore any square brackets but keep
-      parentheses as labels.
-      "labels" is an array of strings, e.g. ["strategy","Goal Setting"].
+      We replace the defaultItems with the new set of 158 rules.
+      - Convert any label that starts uppercase to lowercase.
+      - If a rule ends with a period, remove that trailing period.
     */
-    const defaultItems = [
+
+    const newRules = [
       {
         priority: 1,
         title: "Remember you have limited time to achieve your goal, every second brings things closer to being set",
-        labels: ["strategy", "Goal Setting"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution"]
       },
       {
         priority: 2,
         title: "My values are grit, empathy, and integrity",
-        labels: [],
-        count: 0,
-        tweetCount: 0
+        labels: []
       },
       {
         priority: 3,
         title: "Your only limitation is the things you are attached to, and your ability to endure",
-        labels: ["Character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 4,
         title: "If you can commit your mind nothing can stop you",
-        labels: ["Character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 5,
         title: "Schedule your highest priorities first",
-        labels: ["strategy", "Goal Setting"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution"]
       },
       {
         priority: 6,
         title: "Don’t be attached to anything, and don’t leak your fortune",
-        labels: ["Character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 7,
-        title: "Never be happy with yourself, pride and complacency are dangerous. Always be Humble.",
-        labels: ["Character"],
-        count: 0,
-        tweetCount: 0
+        title: "Never be happy with yourself, pride and complacency are dangerous. Always be Humble",
+        labels: ["character"]
       },
       {
         priority: 8,
-        title: "Act like you want your future perfect self to be in all aspects of your life",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        title: "Act like you want your future [perfect] self to be in all aspects of your life",
+        labels: ["character"]
       },
       {
         priority: 9,
         title: "Enjoy time with others, don’t indulge yourself always be hungry",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 10,
         title: "Ask: what does my body need to perform?",
-        labels: ["health"],
-        count: 0,
-        tweetCount: 0
+        labels: ["health"]
       },
       {
         priority: 11,
         title: "Use every opportunity to deepen relationships, and make people feel good",
-        labels: ["social"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 12,
         title: "As a coach, don't have emotion, drive people to achieve their goals",
-        labels: ["coaching", "leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["coaching", "leadership"]
       },
       {
         priority: 13,
         title: "Give tough feedback and make people think after leaving the session",
-        labels: ["coaching", "leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["coaching", "leadership"]
       },
       {
         priority: 14,
         title: "Drive forward with what you think is right while also being kind, have intent about your time with people, only quality time",
-        labels: ["coaching","Character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["coaching", "character"]
       },
       {
         priority: 15,
         title: "Live every day like it is your last and like you will live forever",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 16,
         title: "Take charge of every situation and don’t be a passenger",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 17,
         title: "When you have a social event define a goal and make people feel good",
-        labels: ["social"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 18,
         title: "Meditate and reflect at the end of the day and bring solutions from the sub conscience",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 19,
         title: "When someone has a goal help them achieve it 100% off the bat, if you see challenges, reframe them to be positive, 'good and better if'",
-        labels: ["Character", "leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character", "leadership"]
       },
       {
         priority: 20,
         title: "When taking feedback just say 'thank you'",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 21,
         title: "Always be positive and uplifting,",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 22,
         title: "I have a plan for every minute of every day and live intentionally. An idle mind is in the devils hands",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 23,
         title: "Don’t give away things that should be precious",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 24,
         title: "Think big, start small, empower and focus on the how",
-        labels: ["Goal Setting", "strategy"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution"]
       },
       {
         priority: 25,
         title: "Start with a question",
-        labels: ["coaching", "leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["coaching", "leadership"]
       },
       {
         priority: 26,
         title: "Never wish time away",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 27,
         title: "Do things as fast as is physically and mentally possible, make it a habit",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 28,
         title: "Don’t give your power away, stay centred",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 29,
         title: "Never go where you are not wanted",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 30,
-        title: "Check your teams deadlines/commitments at the start of the week and remind them",
-        labels: ["leadership"],
-        count: 0,
-        tweetCount: 0
+        title: "Check your teams deadlines [commitments] at the start of the week and remind them",
+        labels: ["leadership"]
       },
       {
         priority: 31,
         title: "Don’t sit with your back in the chair",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 32,
         title: "Only past the edge of endurance is there growth",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 33,
         title: "When giving feedback, say: 'I am only saying this because I have high expectations for you’",
-        labels: ["leadership", "management"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "leadership"]
       },
       {
         priority: 34,
-        title: "Details matter, only by doing the small things well can you achieve big things (marginal gains)",
-        labels: ["leadership","character"],
-        count: 0,
-        tweetCount: 0
+        title: "Details matter, only by doing the small things well can you achieve big things [marginal gains]",
+        labels: ["leadership", "character"]
       },
       {
         priority: 35,
         title: "Never say negative things, everything can be reframed to a positive",
-        labels: ["Leadership","communication"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "communication"]
       },
       {
         priority: 36,
         title: "Never give people an out, people can move faster than they think, keep decompressing timelines",
-        labels: ["coaching","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["coaching", "leadership"]
       },
       {
         priority: 37,
         title: "Don’t label people as it limits them, praise the effort and improvement",
-        labels: ["leadership","coaching"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "coaching"]
       },
       {
         priority: 38,
         title: "Make people comfortable around you",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 39,
         title: "In a presentation talk to the representative in the audience, regardless of size of the audience, talk directly to them",
-        labels: ["communication","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 40,
         title: "If you are feeling tense before a presentation reframe it as excitement and embrace the energy",
-        labels: ["communication","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 41,
         title: "Be careful how you position yourself [label] in peoples mind in your messaging, it will become fixed in their mind and an anchor for you",
-        labels: ["communication","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 42,
         title: "Write and record every day it brings clarity to your message and how you communicate",
-        labels: ["communicate","Leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 43,
-        title: "When defining a goal; opportunity, hypothesis, measure of success, goal.",
-        labels: ["strategy","Goal setting"],
-        count: 0,
-        tweetCount: 0
+        title: "When defining a goal; opportunity,  hypothesis, measure of success, goal",
+        labels: ["strategy&execution"]
       },
       {
         priority: 44,
         title: "When you are under pressure and being tested, you don’t rise to the occasion, you fall to the level of your knowledge and experience",
-        labels: ["character","Leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character", "leadership"]
       },
       {
         priority: 45,
         title: "Being a leader means maintaining impeccable standards, and demanding them of others with compassion and empathy",
-        labels: ["Leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership"]
       },
       {
         priority: 46,
         title: "The job of a leader is not to make the right decisions, but to ensure the right decisions are made [delegation]",
-        labels: ["Leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership"]
       },
       {
         priority: 47,
-        title: "Right people on the bus, wrong people off the bus, right people in the right positions. You do this and you can trust and empower people; if you don’t, the perfect plan will be useless",
-        labels: ["strategy","leadership"],
-        count: 0,
-        tweetCount: 0
+        title: "Right people on the bus wrong people off the bus, right people in the right positions. You do this and you can trust and empower people, you don’t the perfect plan will be useless",
+        labels: ["strategy&execution", "leadership"]
       },
       {
         priority: 48,
         title: "If there is a cancer, cut it off",
-        labels: ["leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership"]
       },
       {
         priority: 49,
         title: "I don’t judge people, I meet people where they are",
-        labels: ["leadership","Coaching"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "coaching"]
       },
       {
         priority: 50,
         title: "I consistently improve at meeting my commitments and I measure them",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 51,
         title: "Schedule no more than 60% of your time, leave room for creativity and unplanned work",
-        labels: ["Strategy"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution"]
       },
       {
         priority: 52,
         title: "Remember as a coach it's their transformation/meeting not yours. If you want it to be directive ask the manager to drive the change",
-        labels: ["coaching"],
-        count: 0,
-        tweetCount: 0
+        labels: ["coaching"]
       },
       {
         priority: 53,
         title: "If you are trying to achieve a goal ensure everyone is in the room as you are only as fast as your slowest dependency",
-        labels: ["coaching","strategy"],
-        count: 0,
-        tweetCount: 0
+        labels: ["coaching", "strategy&execution"]
       },
       {
         priority: 54,
         title: "If you are not at the table, you are on the table",
-        labels: ["Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution"]
       },
       {
         priority: 55,
         title: "I focus on outcomes and I achieve them, I am good at building the right team to achieve a goal",
-        labels: ["Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution"]
       },
       {
         priority: 56,
         title: "When you speak or write you are a movie projecting into the minds of others, make it a good one",
-        labels: ["communication","Leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 57,
         title: "Always think big and positively. Reframe every challenge situation",
-        labels: ["leadership","communication","Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "communication", "strategy&execution"]
       },
       {
         priority: 58,
         title: "Everything you do must be first class",
-        labels: ["character","Leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character", "leadership"]
       },
       {
         priority: 59,
         title: "I'm comfortable with being alone",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 60,
         title: "Skate to where the puck is going, not where it has been. Go against the trend",
-        labels: ["Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution"]
       },
       {
         priority: 61,
-        title: "When a management with a reputation for brilliance tackles a business with a reputation for bad economics It is the reputation of the business that remains intact.",
-        labels: ["Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        title: "When a management with a reputation for brilliance, tackles a business with a reputation for bad economics It is the reputation of the business that remains intact",
+        labels: ["strategy&execution"]
       },
       {
         priority: 62,
         title: "When there is a problem, look inside",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 63,
         title: "If something doesn’t contribute, don’t do it",
-        labels: ["Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution"]
       },
       {
         priority: 64,
         title: "Once a quarter map out previous week, and delegate everything you can",
-        labels: ["Strategy&Execution","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution", "leadership"]
       },
       {
         priority: 65,
         title: "Read your North Star, OKRs, USM and rules daily to remain laser focused",
-        labels: ["Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution"]
       },
       {
         priority: 66,
         title: "Maintain a buffer for uncertainty and risk",
-        labels: ["Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution"]
       },
       {
         priority: 67,
         title: "Read your email first every day, and if asked for something, schedule and manage the expectation",
-        labels: ["Strategy&Execution","communication"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution", "communication"]
       },
       {
         priority: 68,
         title: "If there is a problem, bring it to the team",
-        labels: ["Strategy&Execution","leadership","coaching"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution", "leadership", "coaching"]
       },
       {
         priority: 69,
         title: "Only do it, if someone is committed to it, never do it for them",
-        labels: ["leadership","coaching"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "coaching"]
       },
       {
         priority: 70,
         title: "Ask questions and be comfortable with silence, if someone is silent give them time, they are thinking",
-        labels: ["leadership","coaching"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "coaching"]
       },
       {
         priority: 71,
         title: "Motivate people and max out their potential, every ounce",
-        labels: ["leadership","coaching"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "coaching"]
       },
       {
         priority: 72,
         title: "Don't do it for them, use AO Coaching Model to map out the problem and solution space, and look for commitment to their next step",
-        labels: ["leadership","coaching"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "coaching"]
       },
       {
         priority: 73,
         title: "Be Grateful, practice it as a habit, and express it",
-        labels: ["Character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 74,
         title: "Ask for help",
-        labels: ["Character","leadership","Strategy&Execution"].filter((lab)=>(lab==="Character"||lab==="leadership")||false), // user wrote (Character)  (leadership) (Strategy&Execution). We can keep them all.
-        count: 0,
-        tweetCount: 0
+        labels: ["character", "leadership", "strategy&execution"]
       },
       {
         priority: 75,
         title: "Never say something negative, reframe negatives to positives",
-        labels: ["leadership","communication"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "communication"]
       },
       {
         priority: 76,
-        title: "After an event ask 'how could we do it better'",
-        labels: ["leadership","Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        title: "After a event ask 'how could we do it better'",
+        labels: ["leadership", "strategy&execution"]
       },
       {
         priority: 77,
         title: "At the start of your day, plan the day, and think through, and commit to the perfect outcome for every event",
-        labels: ["leadership","Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "strategy&execution"]
       },
       {
         priority: 78,
         title: "Update your net-worth once a quarter and refine your financial strategy and goals",
-        labels: ["finance"],
-        count: 0,
-        tweetCount: 0
+        labels: ["finance"]
       },
       {
         priority: 79,
         title: "Invest in the future you want to see",
-        labels: ["finance"],
-        count: 0,
-        tweetCount: 0
+        labels: ["finance"]
       },
       {
         priority: 80,
         title: "Invest in yourself",
-        labels: ["finance"],
-        count: 0,
-        tweetCount: 0
+        labels: ["finance"]
       },
       {
         priority: 81,
-        title: "Everything you consume becomes part of you, and you have to suffer to lose it (marginal gains in everything)",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        title: "Everything you consume becomes part of you, and you have to suffer to lose it [marginal gains in everything]",
+        labels: ["character"]
       },
       {
         priority: 82,
         title: "Start from values and principles. Start from first principles. Expand area of agreement, and minimise the area of disagreement",
-        labels: ["negotiation","Strategy&Execution","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation", "strategy&execution", "leadership"]
       },
       {
         priority: 83,
         title: "Give everything your all",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 84,
         title: "The number one motivator is optimism, give people something to look forward to",
-        labels: ["Strategy&Execution","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution", "leadership"]
       },
       {
         priority: 85,
         title: "What can I delegate?",
-        labels: ["Strategy&Execution","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution", "leadership"]
       },
       {
         priority: 86,
         title: "Never compliment people, find a way for them to move forward",
-        labels: ["leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership"]
       },
       {
         priority: 87,
         title: "The more alignment you create, from the top to the bottom of your organization the more people will notice your contribution and the more influence you will have over time",
-        labels: ["Strategy&Execution","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution", "leadership"]
       },
       {
         priority: 88,
-        title: "Listen to understand, not to reply. Probe with questions.",
-        labels: ["leadership","coaching"],
-        count: 0,
-        tweetCount: 0
+        title: "Listen to understand, not to reply. Probe with questions",
+        labels: ["leadership", "coaching"]
       },
       {
         priority: 89,
         title: "Be assertive, coaching is only a tool",
-        labels: ["coaching"],
-        count: 0,
-        tweetCount: 0
+        labels: ["coaching"]
       },
       {
         priority: 90,
         title: "Real world person trying to solve a problem they had",
-        labels: ["leadership","communication"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "communication"]
       },
       {
         priority: 91,
         title: "Use consistent vocabulary",
-        labels: ["Strategy&Execution","communication","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution", "communication", "leadership"]
       },
       {
         priority: 92,
         title: "Make your audience feel like a hero and they will connect with your message on an emotional level. Ensure that every sentence from the first to the last connects to a goal, and deepens our understanding of being human",
-        labels: ["Strategy&Execution","communication","Leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution", "communication", "leadership"]
       },
       {
         priority: 93,
         title: "Who are you speaking to? What do they care about? And why are they attending the session?",
-        labels: ["Communication","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 94,
-        title: "Have an opinion. What am I trying to get across? Use sign posts.",
-        labels: ["communication","Leadership"],
-        count: 0,
-        tweetCount: 0
+        title: "Have an opinion. What am I trying to get across? Use sign posts",
+        labels: ["communication", "leadership"]
       },
       {
         priority: 95,
         title: "Strategy without tactics is the slowest route to victory, and tactics without strategy is the noise before defeat [Sun Tse]",
-        labels: ["Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution"]
       },
       {
         priority: 96,
         title: "Your mind should always be empty and still and free from attachments and pursuits",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 97,
-        title: "A little neglect may breed great mischief, I never use 'just this once' as an excuse (marginal gains)",
-        labels: ["character","Leadership"],
-        count: 0,
-        tweetCount: 0
+        title: "A little neglect may breed great mischief, I never use just this once as an excuse [marginal gains]",
+        labels: ["character", "leadership"]
       },
       {
         priority: 98,
         title: "When its cold, you get colder, and when its hot you get hotter",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 99,
         title: "There is no limit to what the human mind can endure in pursuit of a worthy goal",
-        labels: ["character","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character", "leadership"]
       },
       {
         priority: 100,
         title: "Maintain a consistent morning and evening routine these are the foundations for consistent growth",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 101,
         title: "Email reminders at the end of the day to remind people why we are meeting, what we aim to achieve, and what they need to prepare",
-        labels: ["leadership","communication","Coaching"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "communication", "coaching"]
       },
       {
         priority: 102,
-        title: "I build feedback loops into everything I do.",
-        labels: ["Strategy&Execution","leadership"],
-        count: 0,
-        tweetCount: 0
+        title: "I build feedback loops into everything I do",
+        labels: ["strategy&execution", "leadership"]
       },
       {
         priority: 103,
-        title: "Stop and think is what I am going to say necessary and allow the other person to speak more.",
-        labels: ["communication","Leadership"],
-        count: 0,
-        tweetCount: 0
+        title: "Stop and think is what I am going to say necessary and allow the other person to speak more",
+        labels: ["communication", "leadership"]
       },
       {
         priority: 104,
         title: "Be concise, and choose your words carefully",
-        labels: ["communication","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 105,
         title: "Never seek comfort",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 106,
         title: "Understand who gets things done in your organisation and find a way to work with them",
-        labels: ["Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution"]
       },
       {
         priority: 107,
         title: "When implementing change in an organisation, create a change vision and talk progress to it",
-        labels: ["communication","Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "strategy&execution"]
       },
       {
         priority: 108,
         title: "Wait for the right opportunity to say something, wait until the other party can accept it",
-        labels: ["communication","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 109,
         title: "Praise effort and never limit with labels",
-        labels: ["communication","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 110,
         title: "I am a vacuum filled only with good things",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 111,
         title: "I am an example and an inspiration",
-        labels: ["character","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character", "leadership"]
       },
       {
         priority: 112,
         title: "I make clear what is acceptable and what is not to do",
-        labels: ["Leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership"]
       },
       {
         priority: 113,
         title: "Max out your gifts",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 114,
         title: "What do you need?",
-        labels: ["communication"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication"]
       },
       {
         priority: 115,
         title: "Engage the audience",
-        labels: ["communication"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication"]
       },
       {
         priority: 116,
         title: "Never accept limits or labels",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 117,
         title: "Ask for help",
-        labels: ["leadership","character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "character"]
       },
       {
         priority: 118,
-        title: "Either develop or replace the person if standards are not met.",
-        labels: ["leadership"],
-        count: 0,
-        tweetCount: 0
+        title: "Either develop or replace the person if standards are not met",
+        labels: ["leadership"]
       },
       {
         priority: 119,
         title: "Define objectives that are significant, concrete, action orientated, and inspirational",
-        labels: ["leadership","Strategy&Execution"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership", "strategy&execution"]
       },
       {
         priority: 120,
         title: "Never want anything from anyone and your heart will be free, be compassionate to everyone",
-        labels: ["Character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 121,
         title: "Get people to confirm what they are thinking, especially in a conflict situation, expand the agreement and minimize the difference",
-        labels: ["communication","leadership","negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership", "negotiation"]
       },
       {
         priority: 122,
         title: "Think carefully about every word you say, ensure it does not hurt anyone, reframe, and keep doors open",
-        labels: ["communication","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 123,
         title: "Embrace chances to develop richer relationships",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 124,
         title: "Ask: How are you strengthening the moat?",
-        labels: ["Strategy&Execution","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["strategy&execution", "leadership"]
       },
       {
         priority: 125,
         title: "Ask: does anyone know who I am? Why would they look for me? Do they know where to find me?",
-        labels: ["communication","Leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 126,
         title: "When people are silent, remember they are thinking. Hold the silence",
-        labels: ["communication","Leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 127,
         title: "Zoom: if you want to have a presence you have to be seen ask: If you are comfortable and able please turn your camera on, it will make the meeting more engaging",
-        labels: ["communication","leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication", "leadership"]
       },
       {
         priority: 128,
-        title: "When someone is angry, acknowledge their anger, validate their feeling and show respect.",
-        labels: ["leadership","communication"],
-        count: 0,
-        tweetCount: 0
+        title: "When someone is angry, acknowledge their anger, validate their feeling and show respect",
+        labels: ["leadership", "communication"]
       },
       {
         priority: 129,
         title: "Greet everyone with a smile and enthusiasm. Make it a habit as it attracts people and opportunities",
-        labels: ["communication"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication"]
       },
       {
         priority: 130,
         title: "Don’t build a company, build amazing people",
-        labels: ["leadership"],
-        count: 0,
-        tweetCount: 0
+        labels: ["leadership"]
       },
       {
         priority: 131,
         title: "When presenting an idea practice presenting it in many different ways so it is just conversation and you've made the connections in your mind",
-        labels: ["communication"],
-        count: 0,
-        tweetCount: 0
+        labels: ["communication"]
       },
       {
         priority: 132,
-        title: "When learning a new concept: [1] Pick the path of least resistance and highest relevance [2] Scope your resources: how much time do I have? [2] Skim read [3] Pick out keywords; anchors [4] search for words you don’t understand and ensure you understand them [5] Build a mental model/structure on what you understand [6] Then when new information comes in; how does it fit? how is it different? Why is it different? [7] second time around build more connections to the anchor points, remove less important anchor points [8] third pass; ask questions to test recall.",
-        labels: [],
-        count: 0,
-        tweetCount: 0
+        title: "When learning a new concept: [1] Pick the path of least resistance and highest relevance [2] Scope your resources: how much time do I have? [2] Skim read [3] Pick out keywords; anchors [4] search for words you don’t understand and ensure you understand them [5] Build a mental model/structure on what you understand [6] Then when new information comes in; how does it fit? how is it different? Why is it different? [7] second time around build more connections to the anchor points, remove less important anchor points [8] third pass; ask questions to test recall",
+        labels: []
       },
       {
         priority: 133,
         title: "Remember you are exactly where you are supposed to be",
-        labels: ["character"],
-        count: 0,
-        tweetCount: 0
+        labels: ["character"]
       },
       {
         priority: 134,
         title: "Think from the other persons perspective",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 135,
         title: "You fall to the highest level of preparation",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 136,
         title: "At the start of the negotiation map out the landscape",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 137,
         title: "A BATNA gives you the courage to walk away",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 138,
         title: "Remember negotiation includes Process, Relationship and Substance",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 139,
         title: "Use an integrative approach to build common ground and trust",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 140,
         title: "Probe with open ended questions allow the counterpart to do the work for you",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 141,
         title: "Expand the area of agreement",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 142,
         title: "Give people the illusion of control",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 143,
         title: "You must understand why the other person is selling",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 144,
         title: "The key to identify value is to identify areas the other side values more than you do",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 145,
         title: "The other side always has three black swans",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 146,
         title: "Once the frame is set offer a low relative anchor",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 147,
         title: "'No' starts clarifying the conversation. What exactly are we ruling out?",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 148,
         title: "Reject an unacceptable anchor, don’t debate it",
-        labels: [],
-        count: 0,
-        tweetCount: 0
+        labels: []
       },
       {
         priority: 149,
         title: "You can make an aggressive anchor, but you must be able to justify it",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 150,
         title: "Labelling, get them to confirm the emotions you are seeing. Once you have thrown out a label. Silence, stop and listen. ‘It appears you are angry..’.",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 151,
         title: "Neutralise the negative, reinforce the positive. Diffuse the negative. Acknowledge and diffuse it",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 152,
         title: "’ Sorry that just doesn’t work me’",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 153,
         title: "If there is an ultimatum acknowledge it and change it to an aspiration",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 154,
         title: "No option should be discarded until necessary",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 155,
         title: "Use a dominating approach when a quick decision is needed or when you have a strong position",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 156,
         title: "Differences of opinion about future events don't have to be bridged: they become the core of the contingent contract",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       },
       {
         priority: 157,
-        title: "Steinhouse approach is best when you are negotiating indivisible items because it takes into account both persons' evaluations",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        title: "Steinhouse approach is best when you are negotiating indivisible items because it takes into account, both persons evaluations",
+        labels: ["negotiation"]
       },
       {
         priority: 158,
         title: "Nibble more value at the end (That’s unfair)",
-        labels: ["negotiation"],
-        count: 0,
-        tweetCount: 0
+        labels: ["negotiation"]
       }
     ];
 
+    // Transform labels to lowercase if they start uppercase
+    // Also remove trailing '.' in the title, if any.
+    function transformRules(rules) {
+      return rules.map((rule) => {
+        // 1) Trim trailing period if it exists
+        let titleTrimmed = rule.title.trim().replace(/\.$/, "");
+
+        // 2) For each label, ensure it's lowercase
+        let transformedLabels = rule.labels.map((lbl) => {
+          // If label's first character is uppercase, convert entire label to lower
+          // e.g. "Leadership" -> "leadership"
+          if (lbl.length > 0 && lbl[0] === lbl[0].toUpperCase()) {
+            return lbl.toLowerCase();
+          }
+          return lbl;
+        });
+
+        return {
+          priority: rule.priority,
+          title: titleTrimmed,
+          labels: transformedLabels,
+          count: 0,
+          tweetCount: 0
+        };
+      });
+    }
+
+    const defaultItems = transformRules(newRules);
+
     // Load from localStorage if available
-    function loadItemsFromStorage() {
+    function loadItemsFromStorage(itemsArray) {
       try {
         const stored = localStorage.getItem("ruleItems");
         if (stored) {
           return JSON.parse(stored);
         } else {
-          return defaultItems;
+          return itemsArray;
         }
       } catch (err) {
         console.error("Error reading from localStorage:", err);
-        return defaultItems;
+        return itemsArray;
       }
     }
 
@@ -1327,22 +1038,25 @@
       }
     }
 
-    let items = loadItemsFromStorage();
+    let items = loadItemsFromStorage(defaultItems);
     // Sort by priority
     items.sort((a, b) => a.priority - b.priority);
 
     // Collect all unique labels
     const allLabels = new Set();
-    items.forEach(item => {
-      item.labels.forEach(label => allLabels.add(label));
+    items.forEach((item) => {
+      item.labels.forEach((label) => {
+        if (label) allLabels.add(label);
+      });
     });
-    const uniqueLabels = Array.from(allLabels).filter((label) => label !== "");
+    const uniqueLabels = Array.from(allLabels);
 
-    /* MULTI-LABEL FILTER:
+    /*
+      MULTI-LABEL FILTER:
       We keep a Set of selectedLabels. Whenever the user clicks a label,
       we toggle it. If no label is selected, we show all items.
       Otherwise, show items that contain at least one of the selected labels.
-     */
+    */
     let selectedLabels = new Set();
 
     const labelListEl = document.getElementById("labelList");
@@ -1367,7 +1081,7 @@
       if (selectedLabels.size === 0) {
         return items;
       }
-      return items.filter(item =>
+      return items.filter((item) =>
         item.labels.some((lbl) => selectedLabels.has(lbl))
       );
     }
@@ -1375,29 +1089,38 @@
     // Render items
     function renderItems(itemsToRender) {
       itemListEl.innerHTML = "";
-      itemsToRender.forEach(item => {
+      itemsToRender.forEach((item) => {
         const itemEl = document.createElement("div");
         itemEl.className = "item";
+
+        // Instead of "Priority", we use "Rule"
+        const priorityEl = document.createElement("div");
+        priorityEl.className = "item-priority";
+        priorityEl.textContent = `Rule: ${item.priority}`;
 
         const titleEl = document.createElement("div");
         titleEl.className = "item-title";
         titleEl.textContent = item.title;
 
-        const priorityEl = document.createElement("div");
-        priorityEl.className = "item-priority";
-        priorityEl.textContent = `Priority: ${item.priority}`;
-
         // Lightbulb + count
         const lightbulbContainer = document.createElement("div");
         lightbulbContainer.className = "lightbulb-container";
         lightbulbContainer.title = "Click to increase insight count";
-        lightbulbContainer.addEventListener("click", () => handleLightbulbClick(item));
+        lightbulbContainer.addEventListener("click", () =>
+          handleLightbulbClick(item)
+        );
 
-        const lightbulbIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        const lightbulbIcon = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "svg"
+        );
         lightbulbIcon.setAttribute("viewBox", "0 0 24 24");
         lightbulbIcon.classList.add("lightbulb-icon");
 
-        const lightbulbPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const lightbulbPath = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path"
+        );
         lightbulbPath.setAttribute(
           "d",
           "M9 21h6c0-1.654 1.347-3 3-3v-1.621a7.953 7.953 0 0 0 2-5.379c0-4.411-3.589-8-8-8s-8 3.589-8 8c0 2.053.815 3.922 2.148 5.332l.852.934v1.734c1.654 0 3 1.346 3 3zm3-18c3.309 0 6 2.691 6 6a5.95 5.95 0 0 1-1.531 3.951l-.004.005c-.806.94-1.465 1.706-1.465 2.546v.498c0 .351-.223.656-.562.656-.552 0-1 .448-1 1v1h-2v-1c0-.552-.45-1-1-1-.338 0-.562-.305-.562-.656v-.498c0-.84-.66-1.607-1.465-2.547l-.004-.005A5.95 5.95 0 0 1 6 9c0-3.309 2.691-6 6-6z"
@@ -1416,15 +1139,23 @@
         tweetLink.className = "tweet-icon-link";
         tweetLink.href =
           "https://twitter.com/intent/tweet?text=" +
-          encodeURIComponent(`My rule No. ${item.priority}: "${item.title}" For more: https://www.geroconnor.com`);
+          encodeURIComponent(
+            `My rule No. ${item.priority}: "${item.title}" For more: https://www.geroconnor.com`
+          );
         tweetLink.target = "_blank";
         tweetLink.addEventListener("click", () => handleTweetClick(item));
 
-        const twitterIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        const twitterIcon = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "svg"
+        );
         twitterIcon.setAttribute("viewBox", "0 0 24 24");
         twitterIcon.classList.add("tweet-icon");
 
-        const tweetPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const tweetPath = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path"
+        );
         tweetPath.setAttribute(
           "d",
           "M23.954 4.569c-.885.39-1.83.654-2.825.775 1.014-.611 1.793-1.574 2.163-2.723-.951.564-2.005.974-3.127 1.195-.897-.953-2.178-1.548-3.594-1.548-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124-4.09-.205-7.72-2.164-10.148-5.144-.424.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.062c0 2.385 1.693 4.374 3.946 4.827-.413.11-.85.17-1.296.17-.317 0-.626-.031-.928-.088.627 1.956 2.445 3.379 4.604 3.417-1.68 1.319-3.809 2.105-6.115 2.105-.398 0-.79-.023-1.175-.069 2.179 1.397 4.768 2.21 7.548 2.21 9.057 0 14.01-7.507 14.01-14.009 0-.21 0-.42-.016-.63.962-.695 1.796-1.562 2.457-2.549z"
@@ -1438,9 +1169,9 @@
         tweetLink.appendChild(twitterIcon);
         tweetLink.appendChild(tweetCountSpan);
 
-        // Put it all together
-        itemEl.appendChild(titleEl);
+        // Put it all together in the new order
         itemEl.appendChild(priorityEl);
+        itemEl.appendChild(titleEl);
         itemEl.appendChild(lightbulbContainer);
         itemEl.appendChild(tweetLink);
 
@@ -1458,13 +1189,15 @@
       showAllLabel.textContent = "Show All";
       showAllLabel.addEventListener("click", () => {
         selectedLabels.clear();
-        Array.from(labelListEl.getElementsByClassName("label-item")).forEach(el => el.classList.remove("active"));
+        Array.from(labelListEl.getElementsByClassName("label-item")).forEach(
+          (el) => el.classList.remove("active")
+        );
         renderItems(items);
       });
       labelListEl.appendChild(showAllLabel);
 
       // Generate a button for each unique label
-      labels.forEach(label => {
+      labels.forEach((label) => {
         const labelEl = document.createElement("div");
         labelEl.className = "label-item";
         labelEl.textContent = label;
