@@ -207,10 +207,10 @@
 
     <!-- My Rules -->
     <div class="section">
-      <h2>My Rules</h2>
+      <h2>My Principles</h2>
       <p>
         I have read or listened to hundreds of books. From each book there might be one line 
-        that really resonated with me which has been captured below. I read these rules a few 
+        that really resonated with me which has been captured below. I read these principles a few 
         times a week and refine them as I gain more experience and knowledge. If you would like 
         to discuss any of them hit the tweet button below and I'll be tagged.
         <br/>
@@ -1035,7 +1035,7 @@
       }
     ];
 
-    // Transform each rule: remove trailing '.' in title, ensure labels are lowercase
+    // Transform each Principle remove trailing '.' in title, ensure labels are lowercase
     function transformRules(rules) {
       return rules.map((rule) => {
         let titleTrimmed = rule.title.trim().replace(/\.$/, "");
@@ -1121,7 +1121,7 @@
 
         const priorityEl = document.createElement("div");
         priorityEl.className = "item-priority";
-        priorityEl.textContent = `Rule: ${item.priority}`;
+        priorityEl.textContent = `Principle ${item.priority}`;
 
         const titleEl = document.createElement("div");
         titleEl.className = "item-title";
