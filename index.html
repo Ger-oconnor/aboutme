@@ -178,6 +178,7 @@
       display: inline-block;
       margin-bottom: 1rem;
     }
+    /* Status classes */
     .achieved {
       background-color: #4caf50;
       color: #fff;
@@ -233,6 +234,7 @@
       color: #fff;
       margin-top: 0.2rem;
     }
+    /* Confidence color classes */
     .confidence-red {
       background-color: #f44336;
     }
@@ -302,7 +304,6 @@
         </li>
       </ul>
     </div>
-
     <!-- New OKRs, Metrics & Graphs Section inserted after My books -->
     <div class="section">
       <h2>OKRs, Metrics &amp; Graphs</h2>
@@ -398,7 +399,6 @@
           </div>
         </div>
       </section>
-
       <!-- Quarterly OKRs Collapsible Section -->
       <section>
         <button type="button" class="collapsible">Quarterly OKRs</button>
@@ -491,7 +491,6 @@
           </div>
         </div>
       </section>
-
       <!-- Archived OKRs Collapsible Section -->
       <section>
         <button type="button" class="collapsible">Archived OKRs</button>
@@ -584,7 +583,6 @@
           </div>
         </div>
       </section>
-
       <!-- Metrics Collapsible Section -->
       <section>
         <button type="button" class="collapsible">Metrics</button>
@@ -670,7 +668,6 @@
           </table>
         </div>
       </section>
-
       <!-- Graphs Collapsible Section -->
       <section>
         <button type="button" class="collapsible">Graphs</button>
@@ -683,7 +680,6 @@
         </div>
       </section>
     </div>
-
     <!-- My Principles Section -->
     <div class="section">
       <h2>My Principles</h2>
@@ -734,10 +730,8 @@
     }
 
     // Updated functions to safely use localStorage
-
     function loadItemsFromStorage(itemsArray) {
       try {
-        // Try to access localStorage; if not permitted, an error will be thrown.
         const stored = localStorage.getItem("ruleItems");
         if (stored) {
           return JSON.parse(stored);
@@ -781,7 +775,6 @@
           let trimmed = lbl.trim();
           return trimmed.toLowerCase();
         });
-
         return {
           priority: rule.priority,
           title: titleTrimmed,
@@ -1130,10 +1123,47 @@
       }
     }
 
-    // Generate the graphs after the page fully loads
+    // Auto-assign confidence colours based on numeric value
+    function assignConfidenceColors() {
+      Array.from(document.querySelectorAll(".kr-confidence")).forEach(el => {
+        const value = parseFloat(el.textContent.trim());
+        el.classList.remove("confidence-red", "confidence-amber", "confidence-green");
+        if (value < 0.5) {
+          el.classList.add("confidence-red");
+        } else if (value < 0.8) {
+          el.classList.add("confidence-amber");
+        } else {
+          el.classList.add("confidence-green");
+        }
+      });
+    }
+
+    // Auto-assign status colours based on text
+    function assignStatusColors() {
+      Array.from(document.querySelectorAll(".okr-status")).forEach(el => {
+        const statusText = el.textContent.trim().toLowerCase();
+        el.classList.remove("achieved", "not-achieved", "not-started", "in-progress", "abandoned");
+        if (statusText === "achieved") {
+          el.classList.add("achieved");
+        } else if (statusText === "not achieved") {
+          el.classList.add("not-achieved");
+        } else if (statusText === "not started") {
+          el.classList.add("not-started");
+        } else if (statusText === "in progress") {
+          el.classList.add("in-progress");
+        } else if (statusText === "abandoned") {
+          el.classList.add("abandoned");
+        }
+      });
+    }
+
+    // Generate the graphs and then assign colors after page load
     window.addEventListener("load", function() {
       generateOkrGraph();
       generateStateGraph();
+      // Re-assign classes for status and confidence levels for newly rendered elements
+      assignConfidenceColors();
+      assignStatusColors();
     });
   </script>
 </body>
