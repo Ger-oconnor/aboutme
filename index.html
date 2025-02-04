@@ -191,7 +191,7 @@
       background-color: #9e9e9e;
       color: #fff;
     }
-    .in-progress {
+    .committed {
       background-color: #2196f3;
       color: #fff;
     }
@@ -1832,15 +1832,15 @@
     function assignStatusColors() {
       Array.from(document.querySelectorAll(".okr-status")).forEach(el => {
         const statusText = el.textContent.trim().toLowerCase();
-        el.classList.remove("achieved", "not-achieved", "not-started", "in-progress", "abandoned");
+        el.classList.remove("achieved", "not-achieved", "not-started", "committed", "abandoned");
         if (statusText === "achieved") {
           el.classList.add("achieved");
         } else if (statusText === "not achieved") {
           el.classList.add("not-achieved");
         } else if (statusText === "not started") {
           el.classList.add("not-started");
-        } else if (statusText === "in progress") {
-          el.classList.add("in-progress");
+        } else if (statusText === "committed") {
+          el.classList.add("committed");
         } else if (statusText === "abandoned") {
           el.classList.add("abandoned");
         }
